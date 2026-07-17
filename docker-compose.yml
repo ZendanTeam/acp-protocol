@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  acp-node:
+    image: ghcr.io/zendanteam/acp-protocol:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acp-node-alpha
+    restart: always
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    environment:
+      - ACP_HOST_ID=node_us_east_1
+      - ACP_LOG_LEVEL=INFO
+    command: ["python3", "-m", "acp.cli.main", "inspect-mesh"]
+
+  acp-memory-redis:
+    image: redis:7-alpine
+    container_name: acp-redis-cache
+    restart: always
+    ports:
+      - "6379:6379"

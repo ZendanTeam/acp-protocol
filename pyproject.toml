@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "acp-protocol"
+version = "1.0.0"
+description = "Agent Collaboration Protocol (ACP) — Open Standard, Distributed Runtime, and Reference Implementation for AI Agents"
+readme = "README.md"
+authors = [
+    { name = "ACP Protocol Standards Track", email = "acp-protocol@arena.ai" }
+]
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: System :: Distributed Computing",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+    "networkx>=3.0",
+    "click>=8.0",
+    "jsonschema>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ZendanTeam/acp-protocol"
+Documentation = "https://github.com/ZendanTeam/acp-protocol/tree/main/spec"
+Repository = "https://github.com/ZendanTeam/acp-protocol.git"
+Issues = "https://github.com/ZendanTeam/acp-protocol/issues"
+
+[project.scripts]
+acp = "acp.cli.main:cli"
+
+[tool.setuptools.package-dir]
+"" = "reference-implementation"
+
+[tool.setuptools.packages.find]
+where = ["reference-implementation"]
+include = ["acp", "acp.*"]

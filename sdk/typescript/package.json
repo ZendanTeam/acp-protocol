@@ -1,0 +1,28 @@
+{
+  "name": "@acp-protocol/sdk",
+  "version": "1.0.0",
+  "description": "Official TypeScript & Node.js SDK for the Agent Collaboration Protocol (ACP)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "acp",
+    "agent-collaboration-protocol",
+    "ai-agents",
+    "multi-agent",
+    "distributed-systems"
+  ],
+  "author": "ZendanTeam & ACP Protocol Standards Track",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ZendanTeam/acp-protocol.git"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "@types/node": "^20.11.0"
+  }
+}
