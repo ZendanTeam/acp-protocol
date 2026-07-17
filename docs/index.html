@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Collaboration Protocol (ACP) — Open Standard for Multi-Agent AI Swarms</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-obsidian: #08090d;
+            --bg-card: #11131a;
+            --bg-card-hover: #171a24;
+            --bg-surface: #0c0d13;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(0, 240, 255, 0.35);
+            --cyan: #00f0ff;
+            --purple: #9d4edd;
+            --green: #10b981;
+            --gold: #f59e0b;
+            --red: #ef4444;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --gradient-hero: linear-gradient(135deg, #00f0ff 0%, #9d4edd 50%, #f59e0b 100%);
+            --gradient-accent: linear-gradient(135deg, #00f0ff 0%, #9d4edd 100%);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 240, 255, 0.15);
+            --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+        body { background-color: var(--bg-obsidian); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+        /* NAVIGATION BAR */
+        nav {
+            background: rgba(8, 9, 13, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 1000;
+            padding: 16px 0;
+        }
+        .nav-container {
+            max-width: 1350px; margin: 0 auto; padding: 0 30px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff; font-weight: 800; font-size: 1.35rem; }
+        .logo-icon {
+            width: 38px; height: 38px; background: var(--gradient-accent);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            color: #000; font-weight: 900; font-size: 1.2rem;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+        .logo span { background: var(--gradient-accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        .nav-links { display: flex; gap: 30px; list-style: none; align-items: center; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.92rem; font-weight: 500; transition: var(--transition); }
+        .nav-links a:hover { color: #fff; }
+        
+        .nav-actions { display: flex; gap: 14px; align-items: center; }
+        .badge-ver { background: rgba(0, 240, 255, 0.12); border: 1px solid var(--border-glow); color: var(--cyan); padding: 4px 12px; border-radius: 20px; font-size: 0.78rem; font-family: 'Fira Code', monospace; font-weight: 600; }
+        .btn-github {
+            background: #fff; color: #000; padding: 8px 18px; border-radius: 10px;
+            font-weight: 700; font-size: 0.88rem; text-decoration: none; transition: var(--transition);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-github:hover { background: var(--cyan); box-shadow: 0 0 20px rgba(0, 240, 255, 0.5); transform: translateY(-2px); }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 120px 30px 100px; text-align: center; position: relative;
+            background: radial-gradient(circle at 50% 20%, rgba(157, 78, 221, 0.15) 0%, transparent 60%),
+                        radial-gradient(circle at 20% 80%, rgba(0, 240, 255, 0.1) 0%, transparent 50%);
+        }
+        .hero-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 6px 16px; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 30px; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 30px;
+        }
+        .hero-pill strong { color: var(--cyan); font-weight: 600; }
+        .hero h1 {
+            font-size: 4.2rem; font-weight: 800; letter-spacing: -1.5px;
+            max-width: 1000px; margin: 0 auto 24px; line-height: 1.15;
+        }
+        .hero h1 span { background: var(--gradient-hero); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p {
+            font-size: 1.3rem; color: var(--text-muted); max-width: 780px; margin: 0 auto 40px; font-weight: 400;
+        }
+        .hero-buttons { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .btn-primary {
+            background: var(--gradient-accent); color: #000; padding: 14px 32px; border-radius: 12px;
+            font-weight: 800; font-size: 1rem; text-decoration: none; transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.3); display: flex; align-items: center; gap: 10px;
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 240, 255, 0.5); }
+        .btn-secondary {
+            background: var(--bg-card); border: 1px solid var(--border); color: #fff;
+            padding: 14px 32px; border-radius: 12px; font-weight: 600; font-size: 1rem;
+            text-decoration: none; transition: var(--transition); display: flex; align-items: center; gap: 10px;
+        }
+        .btn-secondary:hover { border-color: var(--cyan); background: rgba(0, 240, 255, 0.05); }
+
+        /* SECTION HEADERS */
+        .section { max-width: 1350px; margin: 0 auto 120px; padding: 0 30px; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 12px; }
+        .section-header h2 span { color: var(--cyan); }
+        .section-header p { font-size: 1.1rem; color: var(--text-muted); max-width: 650px; margin: 0 auto; }
+
+        /* MCP VS ACP COMPARISON TABLE */
+        .comp-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px;
+            padding: 40px; box-shadow: var(--shadow-lg); overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 18px 24px; border-bottom: 1px solid var(--border); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+        td { padding: 22px 24px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.95rem; vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        .mcp-cell { color: #d1d5db; }
+        .acp-cell { color: var(--cyan); font-weight: 600; }
+        .tag-mcp { background: rgba(255,255,255,0.06); padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-family: 'Fira Code', monospace; }
+        .tag-acp { background: rgba(0, 240, 255, 0.12); border: 1px solid var(--border-glow); color: var(--cyan); padding: 4px 10px; border-radius: 6px; font-size: 0.78rem; font-family: 'Fira Code', monospace; }
+
+        /* INTERACTIVE WIRE ENVELOPE INSPECTOR */
+        .inspector-box {
+            display: grid; grid-template-columns: 320px 1fr; gap: 30px;
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; padding: 30px; box-shadow: var(--shadow-lg);
+        }
+        @media(max-width: 950px) { .inspector-box { grid-template-columns: 1fr; } }
+        
+        .frame-selector { display: flex; flex-direction: column; gap: 10px; }
+        .frame-btn {
+            background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-muted);
+            padding: 14px 18px; border-radius: 14px; text-align: left; cursor: pointer; transition: var(--transition);
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .frame-btn:hover, .frame-btn.active { background: rgba(0, 240, 255, 0.08); border-color: var(--cyan); color: #fff; }
+        .frame-btn-title { font-family: 'Fira Code', monospace; font-weight: 700; font-size: 0.9rem; color: var(--cyan); }
+        .frame-btn-desc { font-size: 0.78rem; color: var(--text-muted); }
+
+        .frame-preview {
+            background: #050609; border: 1px solid var(--border); border-radius: 16px; padding: 24px;
+            font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #e5e7eb; overflow-x: auto; position: relative;
+        }
+        .copy-btn {
+            position: absolute; top: 16px; right: 16px; background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; transition: var(--transition);
+        }
+        .copy-btn:hover { color: #fff; border-color: var(--cyan); }
+
+        /* 6-TIER MEMORY GRID */
+        .memory-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; }
+        .memory-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 28px;
+            transition: var(--transition); display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden;
+        }
+        .memory-card:hover { border-color: var(--cyan); transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .memory-card::before { content: ''; position: absolute; top: 0; right: 0; width: 100%; height: 3px; background: var(--gradient-accent); opacity: 0; transition: var(--transition); }
+        .memory-card:hover::before { opacity: 1; }
+        .memory-icon { width: 44px; height: 44px; background: rgba(0, 240, 255, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--cyan); }
+        .memory-title { font-size: 1.2rem; font-weight: 700; color: #fff; }
+        .memory-sla { font-size: 0.78rem; font-family: 'Fira Code', monospace; color: var(--gold); background: rgba(245, 158, 11, 0.1); padding: 3px 10px; border-radius: 6px; width: fit-content; }
+        .memory-desc { font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; }
+
+        /* MULTI-LANGUAGE SDK SECTION */
+        .sdk-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; box-shadow: var(--shadow-lg); }
+        .sdk-header { background: var(--bg-surface); border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .sdk-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .sdk-tab {
+            background: transparent; border: 1px solid transparent; color: var(--text-muted);
+            padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: 0.88rem; font-weight: 600; transition: var(--transition);
+        }
+        .sdk-tab.active, .sdk-tab:hover { background: rgba(255,255,255,0.06); color: #fff; border-color: var(--border); }
+        .sdk-code-wrap { padding: 30px; background: #050609; font-family: 'Fira Code', monospace; font-size: 0.88rem; overflow-x: auto; color: #e5e7eb; min-height: 320px; }
+
+        /* RFC INDEX CARDS */
+        .rfc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
+        .rfc-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 22px;
+            text-decoration: none; color: inherit; transition: var(--transition); display: flex; flex-direction: column; gap: 10px;
+        }
+        .rfc-card:hover { border-color: var(--purple); background: rgba(157, 78, 221, 0.04); transform: translateY(-3px); }
+        .rfc-num { font-size: 0.78rem; font-family: 'Fira Code', monospace; color: var(--purple); font-weight: 700; }
+        .rfc-title { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        .rfc-desc { font-size: 0.88rem; color: var(--text-muted); }
+
+        /* FOOTER */
+        footer {
+            background: #050609; border-top: 1px solid var(--border); padding: 60px 30px 40px; text-align: center;
+        }
+        .footer-logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.3rem; margin-bottom: 16px; }
+        .footer-logo span { background: var(--gradient-accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .footer-copy { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 25px; }
+        .footer-links { display: flex; justify-content: center; gap: 30px; list-style: none; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; transition: var(--transition); }
+        .footer-links a:hover { color: var(--cyan); }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">⚡</div>
+                <span>ACP Protocol</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#comparison">Why ACP?</a></li>
+                <li><a href="#envelope">Wire Envelope</a></li>
+                <li><a href="#memory">6-Tier Memory</a></li>
+                <li><a href="#sdk">SDKs</a></li>
+                <li><a href="#rfcs">RFC Specifications</a></li>
+            </ul>
+            <div class="nav-actions">
+                <span class="badge-ver">v0.0.1 Open Spec</span>
+                <a href="https://github.com/ZendanTeam/acp-protocol" class="btn-github" target="_blank">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    GitHub Repo
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-pill">
+            <strong>Standards Track</strong> — Built for Autonomous Multi-Agent Swarm Orchestration
+        </div>
+        <h1>The Distributed Operating Fabric for<br><span>Autonomous AI Agents</span></h1>
+        <p>While MCP connects a single client to local tool servers, ACP establishes the universal runtime, zero-trust security, 6-tier CRDT memory, and DAG workflow engine enabling thousands of AI models to securely discover, negotiate, and execute across machines and clouds.</p>
+        <div class="hero-buttons">
+            <a href="#quickstart" class="btn-primary">
+                Quickstart &amp; Install
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#rfcs" class="btn-secondary">Explore 10 RFC Specifications</a>
+        </div>
+    </section>
+
+    <!-- MCP VS ACP COMPARISON -->
+    <section class="section" id="comparison">
+        <div class="section-header">
+            <h2>Why Not MCP? <span>Solving Multi-Agent Distributed Scale</span></h2>
+            <p>Model Context Protocol (MCP) excels at `1:1` client-server prompt attachment. ACP solves the foundational distributed challenges of `N:M` autonomous agent collaboration.</p>
+        </div>
+        <div class="comp-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:22%;">Architectural Dimension</th>
+                        <th style="width:38%;">Model Context Protocol (MCP)</th>
+                        <th style="width:40%;">Agent Collaboration Protocol (ACP)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Topological Model</strong></td>
+                        <td class="mcp-cell"><span class="tag-mcp">Client-Server (1:1 / 1:N)</span><br>Star topology where a single local IDE frontend controls context.</td>
+                        <td class="acp-cell"><span class="tag-acp">Distributed Mesh (N:M)</span><br>Peer-to-peer, gossip cluster, and hierarchical topology with no single point of failure.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Interaction Pattern</strong></td>
+                        <td class="mcp-cell"><span class="tag-mcp">Synchronous RPC</span><br>Blocking tool calls (`tools/call`) and resource fetching.</td>
+                        <td class="acp-cell"><span class="tag-acp">Async &amp; Streaming First</span><br>Non-blocking multi-modal streaming (`STREAM_CHUNK`), DAG execution, and SLA negotiations.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Identity &amp; Security</strong></td>
+                        <td class="mcp-cell"><span class="tag-mcp">Local Process / Implicit Trust</span><br>Relies on local `stdio` subprocess isolation or basic HTTP keys.</td>
+                        <td class="acp-cell"><span class="tag-acp">Zero-Trust Cryptographic DIDs</span><br>W3C DIDs (`did:acp:...`), canonical Ed25519/HMAC frame signing, Capability Tokens, and mTLS 1.3.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Orchestration &amp; Workflows</strong></td>
+                        <td class="mcp-cell"><span class="tag-mcp">None (Client Loop Scope)</span><br>Left entirely to the client application LLM execution loop.</td>
+                        <td class="acp-cell"><span class="tag-acp">Distributed Workflow Engine</span><br>Parallel DAG tasks, SLA pricing (`PROPOSE->ACCEPT`), Voting Gates (`>= 66.7% consensus`), and reverse <strong>Saga Rollback</strong> upon failure.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Distributed Memory</strong></td>
+                        <td class="mcp-cell"><span class="tag-mcp">Stateless Resource Reads</span><br>Queries via `resources/read` without cross-node state synchronization.</td>
+                        <td class="acp-cell"><span class="tag-acp">6-Tier Synchronized Fabric</span><br>Short-Term LRU, Long-Term KV, Vector Cosine RAG, KG Triples, and <strong>CRDT LWW-Element-Set</strong> conflict-free synchronization.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Network Transports</strong></td>
+                        <td class="mcp-cell"><span class="tag-mcp">stdio &amp; HTTP/SSE</span><br>Primarily designed for local desktop process pipes and SSE.</td>
+                        <td class="acp-cell"><span class="tag-acp">Transport Agnostic Wire Frame</span><br>HTTP/1/2/3, QUIC, gRPC, WebSocket, Unix Domain Sockets, TCP/UDP, and P2P Mesh (`libp2p`).</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- WIRE ENVELOPE INSPECTOR -->
+    <section class="section" id="envelope">
+        <div class="section-header">
+            <h2>Universal <span>Wire Frame Envelope</span></h2>
+            <p>Every message across HTTP, gRPC, QUIC, or WebSocket is encapsulated inside the universal envelope schema (`draft-2020-12`), ensuring verifiable signatures and W3C trace propagation.</p>
+        </div>
+        <div class="inspector-box">
+            <div class="frame-selector">
+                <button class="frame-btn active" onclick="showFrame('req', this)">
+                    <span class="frame-btn-title">REQUEST / RESPONSE</span>
+                    <span class="frame-btn-desc">Standard action dispatch with TTL &amp; cryptographic nonce.</span>
+                </button>
+                <button class="frame-btn" onclick="showFrame('neg', this)">
+                    <span class="frame-btn-title">NEGOTIATION_PROPOSAL</span>
+                    <span class="frame-btn-desc">Dynamic SLA &amp; credit pricing handshake before heavy execution.</span>
+                </button>
+                <button class="frame-btn" onclick="showFrame('stream', this)">
+                    <span class="frame-btn-title">STREAM_CHUNK</span>
+                    <span class="frame-btn-desc">Multi-modal streaming tokens, PCM audio, or video frame bursts.</span>
+                </button>
+                <button class="frame-btn" onclick="showFrame('vote', this)">
+                    <span class="frame-btn-title">VOTE_CAST (`VOTING_GATE`)</span>
+                    <span class="frame-btn-desc">Multi-agent consensus verification before deploying mutations.</span>
+                </button>
+            </div>
+            <div class="frame-preview">
+                <button class="copy-btn" onclick="copyFrame()">Copy JSON</button>
+                <pre id="frame-json-display"></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6-TIER MEMORY -->
+    <section class="section" id="memory">
+        <div class="section-header">
+            <h2>6-Tier Distributed <span>Memory Fabric</span></h2>
+            <p>Agents collaborating across machines require synchronized semantic state. ACP Memory partitions state across six specialized consistency tiers.</p>
+        </div>
+        <div class="memory-grid">
+            <div class="memory-card">
+                <div class="memory-icon">⚡</div>
+                <div class="memory-title">1. Short-Term LRU Cache</div>
+                <span class="memory-sla">SLA Latency: &lt; 1 ms</span>
+                <p class="memory-desc">High-speed working scratchpad for intermediate calculation states, active prompt buffers, and temporary session scratchpads. Auto-evicted on TTL or session end.</p>
+            </div>
+            <div class="memory-card">
+                <div class="memory-icon">💾</div>
+                <div class="memory-title">2. Long-Term Key-Value Store</div>
+                <span class="memory-sla">SLA Latency: &lt; 10 ms</span>
+                <p class="memory-desc">Persistent, durable storage for user preferences, historical agent execution logs, and domain entities backed by RocksDB or distributed DynamoDB tables with RF=3 replication.</p>
+            </div>
+            <div class="memory-card">
+                <div class="memory-icon">🔄</div>
+                <div class="memory-title">3. Shared CRDT Memory</div>
+                <span class="memory-sla">SLA Latency: &lt; 5 ms</span>
+                <p class="memory-desc">Lock-free collaborative workspace state across concurrent agents using <strong>LWW-Element-Set (Last-Write-Wins)</strong>. Highest logical timestamp deterministically merges without distributed locking bottlenecks.</p>
+            </div>
+            <div class="memory-card">
+                <div class="memory-icon">🌌</div>
+                <div class="memory-title">4. Vector Cosine RAG Index</div>
+                <span class="memory-sla">SLA Latency: &lt; 25 ms</span>
+                <p class="memory-desc">Dense high-dimensional embedding storage (HNSW graph index) supporting Cosine Similarity and L2 Euclidean queries with exact metadata tag filtering for instant semantic RAG retrieval.</p>
+            </div>
+            <div class="memory-card">
+                <div class="memory-icon">🕸️</div>
+                <div class="memory-title">5. Knowledge Graph Triples</div>
+                <span class="memory-sla">SLA Latency: &lt; 30 ms</span>
+                <p class="memory-desc">Structured relational reasoning over entity networks (`Subject -> Predicate -> Object`). Supports multi-hop depth traversal (`max_depth=3`) to trace causal dependencies between AI agents and tools.</p>
+            </div>
+            <div class="memory-card">
+                <div class="memory-icon">🔒</div>
+                <div class="memory-title">6. Encrypted Secure Enclave</div>
+                <span class="memory-sla">SLA Latency: &lt; 15 ms</span>
+                <p class="memory-desc">Data-at-rest AES-256-GCM encryption partitions for sensitive PII, healthcare records (`HIPAA`), or API keys. Accessible only by agents presenting a valid cryptographically signed Capability Token.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MULTI-LANGUAGE SDK CODE TABS -->
+    <section class="section" id="sdk">
+        <div class="section-header">
+            <h2>Idiomatic SDKs Across <span>14 Languages</span></h2>
+            <p>Every official SDK follows identical 4-layer architectural abstractions while leveraging the native idioms and concurrency primitives of each platform.</p>
+        </div>
+        <div class="sdk-box">
+            <div class="sdk-header">
+                <div class="sdk-tabs">
+                    <button class="sdk-tab active" onclick="showSdk('python', this)">Python (`acp-py`)</button>
+                    <button class="sdk-tab" onclick="showSdk('ts', this)">TypeScript / Node.js (`@acp/sdk`)</button>
+                    <button class="sdk-tab" onclick="showSdk('go', this)">Go (`acp-go`)</button>
+                    <button class="sdk-tab" onclick="showSdk('rust', this)">Rust (`acp-rs`)</button>
+                    <button class="sdk-tab" onclick="showSdk('csharp', this)">C# (`ACP.Net`)</button>
+                    <button class="sdk-tab" onclick="showSdk('java', this)">Java (`org.acp.sdk`)</button>
+                </div>
+                <span style="font-size:0.78rem; color:var(--cyan); font-family:'Fira Code', monospace;">Zero-copy binary &amp; Pydantic/Zod typing</span>
+            </div>
+            <div class="sdk-code-wrap">
+                <pre id="sdk-code-display"></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- RFC SPECIFICATIONS INDEX -->
+    <section class="section" id="rfcs">
+        <div class="section-header">
+            <h2>10 Production-Grade <span>RFC Specifications</span></h2>
+            <p>Every architectural decision includes complete technical reasoning, scalability math, security analysis, and exact wire formatting suitable for enterprise adoption.</p>
+        </div>
+        <div class="rfc-grid">
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/01-architecture-and-vision.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-001</span>
+                <div class="rfc-title">Architecture &amp; Vision Specification</div>
+                <p class="rfc-desc">Executive summary, comparison with MCP, core principles (`Streaming-First`, `Zero-Trust`), and canonical HMAC/Ed25519 payload canonicalization.</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/02-components-and-roles.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-002</span>
+                <div class="rfc-title">Components &amp; Roles Deep-Dive</div>
+                <p class="rfc-desc">Complete technical specification of all 15 components: Host, Agent, Gateway, Router, Registry, Discovery, Memory Service, Scheduler, Broker, IdP, Marketplace...</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/03-communication-and-transport.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-003</span>
+                <div class="rfc-title">Communication &amp; Transport Bindings</div>
+                <p class="rfc-desc">Semantics for 9 communication vectors (`Agent->Agent/Tool/Human/DB`), network transport adapters (HTTP3/gRPC/QUIC/WebSocket/P2P), and credit flow control.</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/04-workflow-and-orchestration.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-004</span>
+                <div class="rfc-title">DAG Workflow &amp; Orchestration Engine</div>
+                <p class="rfc-desc">Directed Acyclic Graph execution, SLA negotiation (`PROPOSE->COUNTER->ACCEPT`), Voting Gates (`>= 66.7% consensus`), checkpoints, and reverse <strong>Saga Rollbacks</strong>.</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/05-distributed-memory.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-005</span>
+                <div class="rfc-title">Distributed Memory Architecture</div>
+                <p class="rfc-desc">Deep-dive into 6-Tier memory: Short-Term LRU, Long-Term KV, CRDT LWW-Element-Set synchronization, Cosine Vector RAG, KG Triples, and copy-on-write snapshots.</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/06-security-and-zero-trust.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-006</span>
+                <div class="rfc-title">Enterprise Zero-Trust Security</div>
+                <p class="rfc-desc">W3C DIDs (`did:acp:...`), OAuth2/OIDC Token Exchange (`RFC 8693`), mTLS 1.3, Capability Tokens, ABAC claims, Replay defense (`nonce + TTL`), and Secrets Vault.</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/07-discovery-and-marketplace.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-007</span>
+                <div class="rfc-title">Discovery &amp; Marketplace Catalog</div>
+                <p class="rfc-desc">Multi-tier discovery (`mDNS` + `SWIM Gossip` + `Registry Queries`), semantic vector skill indexing, and verified OCI package publishing pipeline.</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/08-runtime-and-observability.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-008</span>
+                <div class="rfc-title">Runtime &amp; OpenTelemetry Suite</div>
+                <p class="rfc-desc">Execution isolation across Docker, K8s Pods, Serverless, Bare Metal (`cgroups v2`), and Wasm (`WASI`), plus W3C traceparent propagation (`00-4bf92f35...-01`).</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/09-sdk-specifications.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-009</span>
+                <div class="rfc-title">Official 14-Language SDK Signatures</div>
+                <p class="rfc-desc">Architectural layers and exact code signatures across Go, Rust, C#, Java, Kotlin, Swift, Python, JavaScript, TypeScript, PHP, Ruby, Lua, C, and C++.</p>
+            </a>
+            <a href="https://github.com/ZendanTeam/acp-protocol/blob/main/spec/10-developer-experience-and-migration.md" class="rfc-card" target="_blank">
+                <span class="rfc-num">RFC-ACP-010</span>
+                <div class="rfc-title">Developer Experience &amp; Migration Guide</div>
+                <p class="rfc-desc">Interactive CLI (`acp`), visual workflow studio, step debugger (`acp-test`), code generator (`acp codegen`), and migration paths from MCP, LangGraph &amp; CrewAI.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">
+            <div class="logo-icon" style="width:30px; height:30px; font-size:1rem;">⚡</div>
+            <span>ACP Protocol</span>
+        </div>
+        <p class="footer-copy">Standards Track Open Specification © 2026 / 1405. Published by ZendanTeam &amp; ACP Working Group.</p>
+        <ul class="footer-links">
+            <li><a href="https://github.com/ZendanTeam/acp-protocol" target="_blank">GitHub Repository</a></li>
+            <li><a href="https://github.com/ZendanTeam/acp-protocol/releases/tag/v0.0.1" target="_blank">Release v0.0.1 Wheel</a></li>
+            <li><a href="https://github.com/ZendanTeam/acp-protocol/tree/main/schemas" target="_blank">JSON Schemas</a></li>
+            <li><a href="https://github.com/ZendanTeam/acp-protocol/actions" target="_blank">CI/CD Status</a></li>
+        </ul>
+    </footer>
+
+    <script>
+        const framesData = {
+            req: `{
+  "$schema": "https://acp.protocol.org/schemas/v1.0.0/envelope.schema.json",
+  "acp_version": "1.0.0",
+  "message_id": "01H2X3Y4Z5A6B7C8D9E0F1G2H3",
+  "correlation_id": "corr_session_99",
+  "timestamp_ns": 1784311200000000000,
+  "ttl_ms": 30000,
+  "sender": {
+    "agent_id": "did:acp:cloud:claude-3-5-sonnet",
+    "host_id": "host_us_east_1"
+  },
+  "receiver": {
+    "target_type": "AGENT",
+    "target_id": "did:acp:cloud:gpt-4o"
+  },
+  "frame_type": "REQUEST",
+  "routing": {
+    "hop_count": 1,
+    "max_hops": 16,
+    "trace_parent": "00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01"
+  },
+  "security": {
+    "nonce": "e3b0c44298fc1c149afbf4c8996fb924",
+    "signature": "MEUCIQDx7q283MFH1h3HZ0q4FANUfLYYXYq283MFH...",
+    "signature_alg": "Ed25519"
+  },
+  "payload": {
+    "action": "synthesize_code",
+    "parameters": {
+      "prompt": "Implement secure zero-trust microservice",
+      "timeout_ms": 15000
+    }
+  }
+}`,
+            neg: `{
+  "acp_version": "1.0.0",
+  "message_id": "01H2X3Y4Z5A6B7C8D9E0F1G2H4",
+  "sender": { "agent_id": "did:acp:scheduler:main", "host_id": "sched_01" },
+  "receiver": { "target_type": "AGENT", "target_id": "did:acp:cloud:gemini-1-5-pro" },
+  "frame_type": "NEGOTIATION_PROPOSAL",
+  "payload": {
+    "negotiation_id": "neg_c788220a",
+    "phase": "PROPOSE",
+    "proposal_terms": {
+      "price_credits": 2.5,
+      "sla_max_latency_ms": 950,
+      "required_capabilities": ["index_knowledge_graph"],
+      "expiry_timestamp_ns": 1784311230000000000
+    }
+  }
+}`,
+            stream: `{
+  "acp_version": "1.0.0",
+  "message_id": "01H2X3Y4Z5A6B7C8D9E0F1G2H5",
+  "correlation_id": "corr_session_99",
+  "sender": { "agent_id": "did:acp:cloud:gpt-4o", "host_id": "host_openai_01" },
+  "receiver": { "target_type": "AGENT", "target_id": "did:acp:cloud:claude-3-5-sonnet" },
+  "frame_type": "STREAM_CHUNK",
+  "payload": {
+    "stream_id": "str_881122",
+    "sequence_number": 4,
+    "content_type": "application/acp-tokens",
+    "data": "export class AutonomousExecutionEngine { ... }",
+    "is_final": false
+  }
+}`,
+            vote: `{
+  "acp_version": "1.0.0",
+  "message_id": "01H2X3Y4Z5A6B7C8D9E0F1G2H6",
+  "correlation_id": "corr_session_99",
+  "sender": { "agent_id": "did:acp:cloud:claude-3-5-sonnet", "host_id": "host_anthropic_01" },
+  "receiver": { "target_type": "SCHEDULER", "target_id": "did:acp:scheduler:main" },
+  "frame_type": "VOTE_CAST",
+  "payload": {
+    "voting_session_id": "vote_gate_deploy_prod",
+    "voter_id": "did:acp:cloud:claude-3-5-sonnet",
+    "decision": "APPROVE",
+    "weight": 1.0,
+    "rationale": "Zero-trust capability assertions and mTLS perimeter validation passed (Score: 99.4).",
+    "signature_proof": "c2lnbmF0dXJlX3Byb29mX2VkMjU1MTk="
+  }
+}`
+        };
+
+        const sdksData = {
+            python: `from acp import ACPClient, AgentManifest, Envelope, FrameType, Skill
+from typing import AsyncIterator
+
+async def run_python_agent():
+    client = await ACPClient.connect("https://gateway.acp.local", did="did:acp:cloud:python-worker")
+    
+    @client.skill(name="optimize_sql", cost_credits=2.0)
+    async def optimize_sql(query: str) -> str:
+        return f"OPTIMIZED_SQL: {query}"
+    
+    # Asynchronous Streaming Call across ACP Mesh
+    async for chunk in client.stream(target_did="did:acp:cloud:db-agent", action="query", params={"sql": "SELECT *"}):
+        print("Received chunk:", chunk.data)`,
+            ts: `import { ACPClient, Envelope, FrameType } from "@acp-protocol/sdk";
+
+const client = await ACPClient.connect({
+  endpoint: "wss://gateway.acp.local/ws",
+  did: "did:acp:cloud:ts-worker",
+  privateKey: process.env.ACP_PRIVATE_KEY!
+});
+
+client.registerSkill("summarize_text", async (params: { text: string }) => {
+  return { summary: params.text.slice(0, 100) };
+});
+
+for await (const chunk of client.streamRequest("did:acp:cloud:llm", "generate", { prompt: "Hello ACP" })) {
+  process.stdout.write(chunk.data);
+}`,
+            go: `package main
+
+import (
+	"context"
+	"fmt"
+	"github.com/ZendanTeam/acp-protocol/acp-go/acp"
+)
+
+func main() {
+	ctx := context.Background()
+	client, err := acp.Connect(ctx, "grpc://gateway.acp.local:50051", acp.WithDID("did:acp:cloud:go-worker"))
+	if err != nil { panic(err) }
+	defer client.Close()
+
+	client.RegisterSkill("process_batch", func(ctx context.Context, req *acp.Request) (*acp.Response, error) {
+		return acp.NewResponse(req, acp.StatusOK, map[string]interface{}{"processed": true}), nil
+	})
+}`,
+            rust: `use acp_rs::{ACPClient, Config, Envelope, Result};
+use futures::StreamExt;
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let client = ACPClient::connect(Config::new("https://gateway.acp.local", "did:acp:cloud:rust-node")).await?;
+    
+    let mut stream = client.stream("did:acp:cloud:streamer", "start_stream", serde_json::json!({})).await?;
+    while let Some(chunk) = stream.next().await {
+        println!("Chunk payload: {:?}", chunk?.payload);
+    }
+    Ok(())
+}`,
+            csharp: `using ACP.Net;
+using ACP.Net.Models;
+
+await using var client = await ACPClient.ConnectAsync("https://gateway.acp.local", "did:acp:cloud:csharp-worker");
+
+client.RegisterSkill("CalculateRisk", async (Request req, CancellationToken ct) => {
+    return new Response(Status.Success, new { riskScore = 0.04 });
+});
+
+await foreach (var chunk in client.StreamAsync("did:acp:cloud:market", "get_prices", new { symbol = "AAPL" })) {
+    Console.WriteLine($"Price chunk: {chunk.Data}");
+}`,
+            java: `import org.acp.sdk.*;
+
+public class ACPApplication {
+    public static void main(String[] args) throws Exception {
+        ACPClient client = ACPClient.builder()
+            .endpoint("https://gateway.acp.local")
+            .did("did:acp:cloud:java-worker")
+            .buildAndConnect();
+
+        client.registerSkill("processData", req -> 
+            Response.success(req, Map.of("status", "processed"))
+        );
+    }
+}`
+        };
+
+        function showFrame(key, btn) {
+            document.querySelectorAll('.frame-btn').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            document.getElementById('frame-json-display').innerText = framesData[key];
+        }
+
+        function showSdk(key, btn) {
+            document.querySelectorAll('.sdk-tab').forEach(b => b.classList.remove('active'));
+            if(btn) btn.classList.add('active');
+            document.getElementById('sdk-code-display').innerText = sdksData[key];
+        }
+
+        function copyFrame() {
+            const txt = document.getElementById('frame-json-display').innerText;
+            navigator.clipboard.writeText(txt);
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = 'Copied!';
+            setTimeout(() => btn.innerText = 'Copy JSON', 2000);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            showFrame('req', document.querySelector('.frame-btn.active'));
+            showSdk('python', document.querySelector('.sdk-tab.active'));
+        });
+    </script>
+</body>
+</html>
