@@ -4,7 +4,7 @@ import os
 import pytest
 import jsonschema
 
-SCHEMA_DIR = "/home/user/acp/schemas"
+SCHEMA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "schemas"))
 
 
 def load_schema(filename: str) -> dict:
