@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "acp-protocol"
-version = "1.0.0"
+version = "1.0.1"
 description = "Agent Collaboration Protocol (ACP) — Open Standard, Distributed Runtime, and Reference Implementation for AI Agents"
 readme = "README.md"
 authors = [

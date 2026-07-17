@@ -1,5 +1,6 @@
 README.md
 pyproject.toml
+reference-implementation/acp/__init__.py
 reference-implementation/acp/cli/__init__.py
 reference-implementation/acp/cli/main.py
 reference-implementation/acp/models/__init__.py

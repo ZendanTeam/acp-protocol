@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: acp-protocol
-Version: 1.0.0
+Version: 1.0.1
 Summary: Agent Collaboration Protocol (ACP) — Open Standard, Distributed Runtime, and Reference Implementation for AI Agents
 Author-email: ACP Protocol Standards Track <acp-protocol@arena.ai>
 License: MIT
@@ -25,122 +25,104 @@ Requires-Dist: networkx>=3.0
 Requires-Dist: click>=8.0
 Requires-Dist: jsonschema>=4.0
 
-# ACP (Agent Collaboration Protocol) Master Repository & Specification
+# ACP (Agent Collaboration Protocol) Master Repository & Package Ecosystem
 
 [![Status: Standards Track](https://img.shields.io/badge/Status-Standards%20Track-brightgreen.svg)]()
 [![Specification: RFC-ACP-001..010](https://img.shields.io/badge/RFCs-001%20to%20010-blue.svg)]()
 [![JSON Schema: Draft 2020--12](https://img.shields.io/badge/JSON%20Schema-Draft%202020--12-orange.svg)]()
 [![Reference Runtime: Python 3.13+](https://img.shields.io/badge/Reference%20Runtime-Python%203.13%2B-yellow.svg)]()
 [![Tests: 18/18 Passing](https://img.shields.io/badge/pytest-18%2F18%20Passing-success.svg)]()
+[![Release v1.0.0](https://img.shields.io/badge/Release-v1.0.0-gold.svg)](https://github.com/ZendanTeam/acp-protocol/releases/tag/v1.0.0)
 
-Welcome to the official master repository for **ACP (Agent Collaboration Protocol)**—the open, cloud-native, transport-agnostic standard designed to serve as the distributed operating protocol and runtime fabric for autonomous AI agents.
-
----
-
-## 1. Vision & Differentiation: Why Not MCP?
-
-While **Model Context Protocol (MCP)** provides a standardized `1:1` client-to-server mechanism for attaching local tools and prompt context to single application frontends, **ACP** solves the distributed systems challenges that emerge when thousands of autonomous agents must collaborate across heterogeneous clouds, enterprise boundaries, and edge networks (`N:M` topology).
-
-Think of ACP as:
-- **Kubernetes for AI Agents:** Orchestration, sandboxed execution, auto-scaling, fault tolerance, and self-healing multi-agent topologies.
-- **HTTP + gRPC + OAuth + Event Bus for Autonomous AI:** Unified wire framing, asynchronous streaming, zero-trust cryptographic capability authorization, and publish/subscribe messaging.
-- **A Distributed Runtime Rather Than Only a Tool-Calling Protocol:** Distributed memory replication, decentralized peer-to-peer discovery, economic negotiation, multi-agent voting gates, and cryptographic auditability.
+Welcome to the official master repository for **ACP (Agent Collaboration Protocol)**—the open, cloud-native, transport-agnostic standard designed to serve as the distributed operating protocol and runtime fabric for autonomous AI agents (`N:M` mesh collaboration).
 
 ---
 
-## 2. Repository & Deliverable Structure
+## 📦 Quick Installation & Package Ecosystem
 
+We have built full distribution packages, Docker images, and SDKs so you don't have to manually manage source code:
+
+### 1. Python Package (`wheel` & `sdist`)
+Install the official Python reference runtime and CLI directly from our release artifacts or locally:
+```bash
+# Install pre-built Wheel directly from GitHub Release v1.0.0
+pip install https://github.com/ZendanTeam/acp-protocol/releases/download/v1.0.0/acp_protocol-1.0.0-py3-none-any.whl
+
+# Or install from source
+git clone https://github.com/ZendanTeam/acp-protocol.git
+cd acp-protocol
+pip install .
 ```
-acp/
-├── README.md                              # Master Overview & Architecture Guide
-├── spec/                                  # 10 Complete Production-Grade Specification RFCs
-│   ├── 01-architecture-and-vision.md      # RFC-ACP-001: Vision, Principles, Wire Frame Envelope
-│   ├── 02-components-and-roles.md         # RFC-ACP-002: Host, Agent, Gateway, Router, Registry...
-│   ├── 03-communication-and-transport.md  # RFC-ACP-003: 9 Communication Targets, HTTP3/gRPC/QUIC
-│   ├── 04-workflow-and-orchestration.md   # RFC-ACP-004: DAG Workflows, Negotiation, Voting, Rollback
-│   ├── 05-distributed-memory.md           # RFC-ACP-005: 6-Tier Memory, CRDT Sync, Vector, KG Triples
-│   ├── 06-security-and-zero-trust.md      # RFC-ACP-006: Zero-Trust, DIDs, Capability Tokens, mTLS
-│   ├── 07-discovery-and-marketplace.md    # RFC-ACP-007: Gossip Discovery, SLA Match, Marketplace
-│   ├── 08-runtime-and-observability.md    # RFC-ACP-008: K8s/Wasm/Edge Runtimes, OpenTelemetry Traces
-│   ├── 09-sdk-specifications.md           # RFC-ACP-009: Idiomatic SDK Specs for 14 Languages
-│   └── 10-developer-experience-and-migration.md # RFC-ACP-010: CLI, Studio, Debugger, Migration Guide
-├── schemas/                               # Official JSON Schemas (Draft 2020-12)
-│   ├── envelope.schema.json               # Universal ACP Wire Envelope
-│   ├── message.schema.json                # Request, Response, Stream, Negotiation Payloads
-│   ├── agent-manifest.schema.json         # Agent Capability & Endpoint Declaration
-│   ├── workflow-dag.schema.json           # DAG Execution, Voting Rules, Saga Rollback
-│   ├── capability-token.schema.json       # Zero-Trust Signed Access Tokens
-│   └── memory-operation.schema.json       # Multi-Tier Distributed Memory Payloads
-├── reference-implementation/              # Executable Python Reference Runtime & SDK (`acp-py`)
-│   ├── acp/
-│   │   ├── models/                        # Pydantic v2 Models (Envelope, Manifest, Workflow, Memory)
-│   │   ├── runtime/                       # Host, AgentRuntime, Gateway, Router
-│   │   ├── services/                      # Discovery, Registry, Marketplace, Memory Service, IdP
-│   │   ├── orchestration/                 # DAG Scheduler, Voting Consensus, Saga Rollback Engine
-│   │   ├── transport/                     # Async Event Bus & Broker Abstraction
-│   │   └── cli/                           # Interactive Command Line Interface (`acp`)
-│   └── tests/                             # Comprehensive pytest Test Suite (100% Passing)
-│       ├── test_schemas.py
-│       ├── test_envelope_security.py
-│       ├── test_memory_service.py
-│       ├── test_discovery_marketplace.py
-│       └── test_workflow_dag.py
+Once installed, the `acp` command is available globally on your terminal!
+
+### 2. TypeScript & Node.js SDK (`@acp-protocol/sdk`)
+For frontend, Node.js, Next.js, or browser Web Worker agents:
+```bash
+cd sdk/typescript
+npm install
+npm run build
+```
+
+### 3. Docker & Docker Compose
+Launch a complete sandboxed ACP Node (`Gateway` + `Router` + `Memory Service` + `Dashboard`) locally or in production:
+```bash
+docker compose up -d
 ```
 
 ---
 
-## 3. Quickstart: Running the Reference Implementation & CLI
+## 🚀 Interactive CLI Commands (`acp`)
 
-You can interact with the live simulated ACP mesh directly using the provided CLI (`acp/cli/main.py`):
+After installing via `pip`, you can run all 5 interactive protocol verification commands directly:
 
-### Inspect Live Mesh & Runtimes
 ```bash
-PYTHONPATH=reference-implementation python3 reference-implementation/acp/cli/main.py inspect-mesh
-```
+# 1. Inspect the live mesh topology and registered agent manifests
+acp inspect-mesh
 
-### Execute a Multi-Agent DAG Workflow with Voting Gate (`>= 66.7% Consensus`)
-```bash
-PYTHONPATH=reference-implementation python3 reference-implementation/acp/cli/main.py run-workflow
-```
+# 2. Execute a multi-agent DAG workflow with a Voting Gate (>= 66.7% consensus)
+acp run-workflow
 
-### Simulate Reverse Topological Saga Rollback
-```bash
-PYTHONPATH=reference-implementation python3 reference-implementation/acp/cli/main.py simulate-saga-rollback
-```
+# 3. Simulate unrecoverable node failure and reverse Saga Rollback
+acp simulate-saga-rollback
 
-### Demonstrate 6-Tier Distributed Memory & CRDT LWW-Element-Set Sync
-```bash
-PYTHONPATH=reference-implementation python3 reference-implementation/acp/cli/main.py memory-demo
-```
+# 4. Demonstrate the 6-Tier Distributed Memory & CRDT LWW-Element-Set Sync
+acp memory-demo
 
-### Simulate Protocol-Level Economic SLA Negotiation
-```bash
-PYTHONPATH=reference-implementation python3 reference-implementation/acp/cli/main.py simulate-negotiation
-```
-
-### Run the Automated Test Suite
-```bash
-PYTHONPATH=reference-implementation pytest reference-implementation/tests/ -v
+# 5. Simulate protocol-level economic SLA negotiation (PROPOSE -> COUNTER -> ACCEPT)
+acp simulate-negotiation
 ```
 
 ---
 
-## 4. Core Architectural Highlights
+## 🏗️ Automated CI/CD & GitHub Actions (`.github/workflows/`)
 
-1. **Universal Wire Frame Envelope (`envelope.schema.json`):**
-   - Transports multi-modal frames (`REQUEST`, `RESPONSE`, `STREAM_CHUNK`, `NEGOTIATION_PROPOSAL`, `VOTE_CAST`) across any transport (HTTP/2/3, QUIC, gRPC, WebSocket, Unix Socket, P2P Mesh).
-   - Enforces cryptographic signing over canonical JSON strings (`HMAC-SHA256`, `Ed25519`, `ECDSA`) and time-bounded replay protection using nonces and eviction caches.
-2. **Zero-Trust Capability Authorization (`capability-token.schema.json`):**
-   - Every agent operates with explicit W3C Decentralized Identifiers (`did:acp:...`).
-   - Gateways intercept traffic, verify mTLS certificates, enforce token bucket rate limiting (`1,000 fps`), inject secrets from the Secrets Vault (`secrets://...`), and check granular ABAC claims.
-3. **6-Tier Distributed Memory Service (`memory-operation.schema.json`):**
-   - **Short-Term (`LRU Cache`):** Sub-millisecond working scratchpad.
-   - **Long-Term (`Key-Value`):** Persistent domain entities with auto-expiring TTL.
-   - **Shared (`CRDT LWW-Element-Set`):** Lock-free, conflict-free state synchronization where highest logical timestamp deterministically wins across distributed replicas.
-   - **Vector (`HNSW Cosine Sim`):** High-dimensional dense embeddings with metadata filtering.
-   - **Knowledge Graph (`RDF/LPG Triples`):** Multi-hop relational entity traversal (`Subject -> Predicate -> Object`).
-   - **Encrypted (`Enclave Storage`):** Data-at-rest encryption envelopes (`AES-256-GCM`).
-4. **DAG Workflow Engine & Saga Rollback (`workflow-dag.schema.json`):**
-   - Evaluates complex node dependencies with topological sorting and cycle detection.
-   - Dispatches parallel nodes (`PARALLEL_JOIN`) and enforces high-precision consensus via `VOTING_GATE` nodes (`e.g., >= 66.7% weighted approval`).
-   - **Saga Pattern Rollback:** If any node fails irrecoverably after `exponential backoff` retries, the Scheduler traverses completed nodes in **reverse topological order**, executing their declared `rollback_action` to restore clean system equilibrium.
+This repository is backed by complete, production-ready continuous integration and deployment pipelines:
+- **`ci.yml`**: Runs the 18-test `pytest` verification suite across Python `3.10`, `3.11`, `3.12`, and `3.13`, validates all 6 JSON Schemas (`draft-2020-12`), and builds the TypeScript SDK on every push and pull request.
+- **`release.yml`**: Automatically builds Python Wheels (`.whl`), builds and pushes multi-stage Docker container images (`ghcr.io/ZendanTeam/acp-protocol:latest`), and publishes release assets to GitHub Releases upon every version tag push (`v*`).
+
+---
+
+## 📚 Protocol Specification Directory (`spec/`)
+
+1. [`01-architecture-and-vision.md`](./spec/01-architecture-and-vision.md) — **RFC-ACP-001:** Vision, Core Principles, Mesh Topology, and Universal Envelope Canonicalization (`Ed25519`/`HMAC-SHA256`).
+2. [`02-components-and-roles.md`](./spec/02-components-and-roles.md) — **RFC-ACP-002:** Deep-dive specifications for all 15 components: *Host, Agent, Gateway, Router, Registry, Discovery, Memory Service, Scheduler, Broker, Identity Provider (IdP), Marketplace, Runtime, Monitoring, Logging, and Telemetry*.
+3. [`03-communication-and-transport.md`](./spec/03-communication-and-transport.md) — **RFC-ACP-003:** Semantics for the 9 communication vectors (*Agent→Agent, Human, Tool, Database, API, Browser, Robot, Cluster, Cloud*), transport bindings (*HTTP/1/2/3, QUIC, gRPC, WebSocket, Unix Socket, TCP, UDP, Bluetooth, mDNS, P2P Mesh*), and native multi-modal streaming.
+4. [`04-workflow-and-orchestration.md`](./spec/04-workflow-and-orchestration.md) — **RFC-ACP-004:** DAG execution rules, task delegation, planning, SLA negotiation (`PROPOSE`→`COUNTER`→`ACCEPT`), voting consensus gates (`VOTING_GATE`), exponential backoff retries, checkpoint snapshots, and **reverse topological Saga Rollbacks (`rollback_action`)**.
+5. [`05-distributed-memory.md`](./spec/05-distributed-memory.md) — **RFC-ACP-005:** Unified 6-tier distributed memory (*Short-Term LRU, Long-Term KV, Shared CRDT LWW-Element-Set, Vector Cosine Sim, Knowledge Graph RDF/LPG Triples, Encrypted Enclaves*), replication loops, and copy-on-write snapshots.
+6. [`06-security-and-zero-trust.md`](./spec/06-security-and-zero-trust.md) — **RFC-ACP-006:** Zero-Trust request lifecycle, OAuth2/OIDC token exchange (`RFC 8693`), mutual TLS (`mTLS 1.3/QUIC`), cryptographic capability tokens, ABAC claims, replay eviction caches (`message_id + nonce`), token bucket rate limiting (`1,000 fps`), and the automated **Secrets Vault**.
+7. [`07-discovery-and-marketplace.md`](./spec/07-discovery-and-marketplace.md) — **RFC-ACP-007:** Multi-tier discovery (`mDNS` + `SWIM Gossip` + `Registry Queries`), semantic vector skill matching, and the ACP Marketplace catalog for verified *Skills, Plugins, Tools, Models, Workflows, Templates, and Knowledge Packs*.
+8. [`08-runtime-and-observability.md`](./spec/08-runtime-and-observability.md) — **RFC-ACP-008:** Runtime targets across *Docker, K8s, Serverless (Lambda/Workers), Bare Metal (cgroups v2), Edge/IoT (Micro-ROS), Mobile/Desktop, and Browser (Wasm Web Workers)*, and OpenTelemetry (`traceparent: 00-4bf92f35...-01`) metrics and circuit breakers.
+9. [`09-sdk-specifications.md`](./spec/09-sdk-specifications.md) — **RFC-ACP-009:** Architectural layers, client abstractions, and idiomatic code signatures across **14 programming languages** (`Go`, `Rust`, `C#`, `Java`, `Kotlin`, `Swift`, `Python`, `JavaScript`, `TypeScript`, `PHP`, `Ruby`, `Lua`, `C`, `C++`).
+10. [`10-developer-experience-and-migration.md`](./spec/10-developer-experience-and-migration.md) — **RFC-ACP-010:** CLI (`acp`), GUI Dashboard, Visual Studio Workflow Builder, step debugger, chaos simulation (`acp-test`), code generator (`acp codegen`), and complete migration guides from **MCP**, **LangGraph**, **CrewAI**, and **AutoGPT**.
+
+---
+
+## 📋 Formal JSON Schemas (`schemas/`)
+
+All wire payloads are formalized using `draft-2020-12` JSON Schemas:
+- [`envelope.schema.json`](./schemas/envelope.schema.json) — Universal ACP Frame Envelope (routing headers, W3C traceparent, signatures, capability tokens, nonces, payload bodies).
+- [`message.schema.json`](./schemas/message.schema.json) — Payloads for `REQUEST`, `RESPONSE`, `STREAM_CHUNK`, `NEGOTIATION_PROPOSAL`, `VOTE_CAST`, and `TASK_DELEGATION`.
+- [`agent-manifest.schema.json`](./schemas/agent-manifest.schema.json) — Manifest published to Registry (`did:acp:...`, skills, endpoints, compute requirements, security profiles).
+- [`workflow-dag.schema.json`](./schemas/workflow-dag.schema.json) — Directed Acyclic Graph specification, nodes, dependencies, voting consensus gates, and `rollback_action` declarations.
+- [`capability-token.schema.json`](./schemas/capability-token.schema.json) — Cryptographically signed zero-trust token granting time-bound action rights over resource URI patterns.
+- [`memory-operation.schema.json`](./schemas/memory-operation.schema.json) — Operations for reading, writing, vector querying (`min_similarity`), graph querying (`max_depth`), CRDT syncing, and snapshotting across the 6 memory tiers.
