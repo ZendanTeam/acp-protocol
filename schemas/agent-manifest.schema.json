@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acp.protocol.org/schemas/v1.0.0/agent-manifest.schema.json",
+  "title": "ACP Agent Manifest Schema",
+  "description": "Standardized definition published by an ACP Agent to the Registry and Discovery engines declaring its identity, skills, models, endpoints, and access policies.",
+  "type": "object",
+  "required": [
+    "did",
+    "name",
+    "version",
+    "description",
+    "skills",
+    "endpoints",
+    "security_profile"
+  ],
+  "properties": {
+    "did": {
+      "type": "string",
+      "pattern": "^did:acp:[a-zA-Z0-9_:-]+$",
+      "description": "Decentralized Identifier unique to this agent."
+    },
+    "name": { "type": "string" },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "author": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "organization": { "type": "string" },
+        "verified_sig": { "type": "string" }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["skill_id", "name", "input_schema"],
+        "properties": {
+          "skill_id": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "category": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } },
+          "input_schema": { "type": "object" },
+          "output_schema": { "type": "object" },
+          "cost_credits_per_invocation": { "type": "number", "default": 0.0 }
+        }
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "model_id": { "type": "string" },
+          "provider": { "type": "string" },
+          "modality": { "type": "array", "items": { "type": "string" } },
+          "context_window": { "type": "integer" }
+        }
+      }
+    },
+    "endpoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["transport", "url"],
+        "properties": {
+          "transport": {
+            "type": "string",
+            "enum": ["HTTP2", "HTTP3", "GRPC", "WEBSOCKET", "QUIC", "UNIX_SOCKET", "TCP", "P2P_MESH"]
+          },
+          "url": { "type": "string" },
+          "tls_required": { "type": "boolean", "default": true }
+        }
+      }
+    },
+    "security_profile": {
+      "type": "object",
+      "required": ["supported_auth", "sandboxed"],
+      "properties": {
+        "supported_auth": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["OAUTH2", "JWT", "MTLS", "CAPABILITY_TOKEN"] }
+        },
+        "sandboxed": { "type": "boolean", "default": true },
+        "isolation_level": { "type": "string", "enum": ["PROCESS", "CONTAINER", "VM", "WASM"] },
+        "pubkey_base64": { "type": "string" }
+      }
+    },
+    "resource_requirements": {
+      "type": "object",
+      "properties": {
+        "min_cpu_cores": { "type": "number" },
+        "min_ram_mb": { "type": "integer" },
+        "gpu_required": { "type": "boolean", "default": false },
+        "memory_tier": { "type": "string", "enum": ["SHORT_TERM", "LONG_TERM", "VECTOR", "GRAPH", "ALL"] }
+      }
+    }
+  }
+}

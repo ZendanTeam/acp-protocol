@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acp.protocol.org/schemas/v1.0.0/workflow-dag.schema.json",
+  "title": "ACP Workflow Directed Acyclic Graph (DAG) Schema",
+  "description": "Schema defining multi-agent workflows, node execution rules, dependencies, checkpoints, voting gates, and rollback policies.",
+  "type": "object",
+  "required": ["workflow_id", "name", "version", "nodes"],
+  "properties": {
+    "workflow_id": { "type": "string" },
+    "name": { "type": "string" },
+    "version": { "type": "string" },
+    "description": { "type": "string" },
+    "global_timeout_ms": { "type": "integer", "default": 300000 },
+    "checkpoint_strategy": {
+      "type": "string",
+      "enum": ["NONE", "AFTER_EACH_NODE", "EXPLICIT_ONLY", "ON_FAILURE"],
+      "default": "AFTER_EACH_NODE"
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "task_name", "execution_type"],
+        "properties": {
+          "node_id": { "type": "string" },
+          "task_name": { "type": "string" },
+          "execution_type": {
+            "type": "string",
+            "enum": ["AGENT_INVOCATION", "PARALLEL_JOIN", "VOTING_GATE", "NEGOTIATION_GATE", "HUMAN_APPROVAL", "SUB_WORKFLOW"]
+          },
+          "target_agent_did": { "type": "string" },
+          "target_skill_query": { "type": "object" },
+          "input_mapping": { "type": "object", "additionalProperties": true },
+          "dependencies": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "List of prior node_ids that must complete successfully before this node executes."
+          },
+          "retry_policy": {
+            "type": "object",
+            "properties": {
+              "max_retries": { "type": "integer", "default": 3 },
+              "backoff_ms": { "type": "integer", "default": 1000 },
+              "multiplier": { "type": "number", "default": 2.0 }
+            }
+          },
+          "rollback_action": {
+            "type": "object",
+            "properties": {
+              "skill_id": { "type": "string" },
+              "parameters": { "type": "object" }
+            }
+          },
+          "voting_rules": {
+            "type": "object",
+            "properties": {
+              "required_voters": { "type": "array", "items": { "type": "string" } },
+              "consensus_threshold_pct": { "type": "number", "default": 66.7 },
+              "timeout_ms": { "type": "integer", "default": 60000 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

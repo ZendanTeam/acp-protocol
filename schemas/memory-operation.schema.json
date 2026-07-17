@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acp.protocol.org/schemas/v1.0.0/memory-operation.schema.json",
+  "title": "ACP Distributed Memory Operation Schema",
+  "description": "Payload schema for querying, writing, synchronizing, and snapshotting distributed agent memory across tiers (Short-Term, Long-Term, Shared, Vector, Knowledge Graph).",
+  "type": "object",
+  "required": ["operation", "memory_tier", "partition_key"],
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": [
+        "GET",
+        "PUT",
+        "DELETE",
+        "QUERY_VECTOR",
+        "QUERY_GRAPH",
+        "SYNC_REPLICAS",
+        "CREATE_SNAPSHOT",
+        "RESTORE_SNAPSHOT"
+      ]
+    },
+    "memory_tier": {
+      "type": "string",
+      "enum": ["SHORT_TERM", "LONG_TERM", "SHARED", "VECTOR", "KNOWLEDGE_GRAPH", "ENCRYPTED"]
+    },
+    "partition_key": {
+      "type": "string",
+      "description": "Session ID, Agent DID, or Workspace ID namespace for memory isolation."
+    },
+    "key": { "type": "string" },
+    "value": { "type": ["string", "object", "array", "number", "boolean"] },
+    "ttl_seconds": { "type": "integer", "description": "Optional time-to-live for stored memory entry." },
+    "vector_query": {
+      "type": "object",
+      "properties": {
+        "embedding": { "type": "array", "items": { "type": "number" } },
+        "top_k": { "type": "integer", "default": 5 },
+        "min_similarity": { "type": "number", "default": 0.75 },
+        "filter_metadata": { "type": "object" }
+      }
+    },
+    "graph_query": {
+      "type": "object",
+      "properties": {
+        "subject": { "type": "string" },
+        "predicate": { "type": "string" },
+        "object": { "type": "string" },
+        "max_depth": { "type": "integer", "default": 2 }
+      }
+    },
+    "encryption_details": {
+      "type": "object",
+      "properties": {
+        "is_encrypted": { "type": "boolean", "default": false },
+        "key_id": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acp.protocol.org/schemas/v1.0.0/message.schema.json",
+  "title": "ACP Payload & Message Schemas",
+  "description": "Schemas for specific payload bodies embedded inside the universal ACP Envelope payload property.",
+  "type": "object",
+  "properties": {
+    "request_payload": {
+      "type": "object",
+      "required": ["action"],
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "Standard or custom action name, e.g., 'workflow.delegate', 'memory.query', 'discovery.search', 'llm.generate'."
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Key-value arguments for the action."
+        },
+        "timeout_ms": {
+          "type": "integer",
+          "default": 30000,
+          "description": "Max execution timeout requested by sender."
+        },
+        "stream_requested": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, receiver should reply with STREAM_CHUNK frames."
+        }
+      }
+    },
+    "response_payload": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["SUCCESS", "ERROR", "PENDING", "REJECTED", "ACCEPTED"]
+        },
+        "status_code": {
+          "type": "integer",
+          "default": 200,
+          "description": "Protocol status code (200 OK, 400 Bad Request, 403 Forbidden, 404 Not Found, 408 Timeout, 500 Internal Error, 503 Overloaded)."
+        },
+        "result": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Execution result or output data."
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" },
+            "details": { "type": "object", "additionalProperties": true }
+          }
+        }
+      }
+    },
+    "stream_chunk_payload": {
+      "type": "object",
+      "required": ["stream_id", "sequence_number", "content_type", "data"],
+      "properties": {
+        "stream_id": { "type": "string", "description": "Unique stream correlation ID." },
+        "sequence_number": { "type": "integer", "minimum": 0 },
+        "content_type": {
+          "type": "string",
+          "enum": [
+            "text/plain",
+            "application/json",
+            "application/acp-tokens",
+            "audio/wav",
+            "audio/opus",
+            "video/h264",
+            "application/octet-stream"
+          ]
+        },
+        "data": {
+          "type": ["string", "object", "array"],
+          "description": "The raw chunk text, JSON object, token string, or base64 encoded binary data."
+        },
+        "is_final": { "type": "boolean", "default": false }
+      }
+    },
+    "negotiation_payload": {
+      "type": "object",
+      "required": ["negotiation_id", "phase", "proposal_terms"],
+      "properties": {
+        "negotiation_id": { "type": "string" },
+        "phase": {
+          "type": "string",
+          "enum": ["PROPOSE", "COUNTER", "ACCEPT", "REJECT"]
+        },
+        "proposal_terms": {
+          "type": "object",
+          "properties": {
+            "price_credits": { "type": "number", "minimum": 0 },
+            "sla_max_latency_ms": { "type": "integer" },
+            "required_capabilities": { "type": "array", "items": { "type": "string" } },
+            "expiry_timestamp_ns": { "type": "integer" }
+          }
+        },
+        "counter_reason": { "type": "string" }
+      }
+    },
+    "vote_payload": {
+      "type": "object",
+      "required": ["voting_session_id", "voter_id", "decision"],
+      "properties": {
+        "voting_session_id": { "type": "string" },
+        "voter_id": { "type": "string" },
+        "decision": { "type": "string", "enum": ["APPROVE", "REJECT", "ABSTAIN"] },
+        "weight": { "type": "number", "default": 1.0 },
+        "rationale": { "type": "string" },
+        "signature_proof": { "type": "string" }
+      }
+    },
+    "task_delegation_payload": {
+      "type": "object",
+      "required": ["task_id", "workflow_id", "task_name", "input_data"],
+      "properties": {
+        "task_id": { "type": "string" },
+        "workflow_id": { "type": "string" },
+        "parent_task_id": { "type": "string" },
+        "task_name": { "type": "string" },
+        "input_data": { "type": "object", "additionalProperties": true },
+        "retry_policy": {
+          "type": "object",
+          "properties": {
+            "max_attempts": { "type": "integer", "default": 3 },
+            "backoff_ms": { "type": "integer", "default": 1000 },
+            "multiplier": { "type": "number", "default": 2.0 }
+          }
+        },
+        "required_skills": { "type": "array", "items": { "type": "string" } },
+        "rollback_instructions": { "type": "object", "additionalProperties": true }
+      }
+    }
+  }
+}

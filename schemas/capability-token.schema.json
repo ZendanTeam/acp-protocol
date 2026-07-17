@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://acp.protocol.org/schemas/v1.0.0/capability-token.schema.json",
+  "title": "ACP Zero-Trust Capability Token Schema",
+  "description": "Cryptographically signed token granting granular, time-bound access rights to specific agents, tools, databases, or memory partitions.",
+  "type": "object",
+  "required": ["token_id", "issuer_did", "subject_did", "issued_at_ns", "expires_at_ns", "capabilities", "signature"],
+  "properties": {
+    "token_id": { "type": "string" },
+    "issuer_did": { "type": "string", "pattern": "^did:acp:[a-zA-Z0-9_:-]+$" },
+    "subject_did": { "type": "string", "pattern": "^did:acp:[a-zA-Z0-9_:-]+$" },
+    "issued_at_ns": { "type": "integer" },
+    "expires_at_ns": { "type": "integer" },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["resource", "actions"],
+        "properties": {
+          "resource": { "type": "string", "description": "URI/pattern of resource, e.g., 'memory://short-term/session-xyz/*' or 'agent://did:acp:finance/execute'" },
+          "actions": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["READ", "WRITE", "EXECUTE", "DELETE", "DELEGATE", "SUBSCRIBE"] }
+          },
+          "conditions": {
+            "type": "object",
+            "properties": {
+              "max_invocations": { "type": "integer" },
+              "allowed_ip_range": { "type": "string" },
+              "max_cost_credits": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "signature": { "type": "string", "description": "Ed25519 or ECDSA signature over the canonical json string of token claims." }
+  }
+}
